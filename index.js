@@ -4,13 +4,14 @@ const OpenAI = require("openai");
 const app = express();
 app.use(express.json());
 
+// تأكد المفتاح موجود
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// الصفحة الرئيسية
+// 🔥 هذا مهم جداً (حل المشكلة)
 app.get("/", (req, res) => {
-  res.send("AI CEO Backend is running 🚀");
+  res.status(200).send("AI CEO Backend is running 🚀");
 });
 
 // endpoint الذكاء
@@ -24,12 +25,8 @@ app.post("/chat", async (req, res) => {
   try {
     const completion = await openai.responses.create({
       model: "gpt-4o-mini",
-      input: [
-        {
-          role: "system",
-          content: `
-You are an AI CEO.
-You think like a business executive.
+      input: `You are an AI CEO.
+Think like a business executive.
 
 Your job:
 - Make decisions
@@ -38,14 +35,7 @@ Your job:
 - Be direct and practical
 - No small talk
 
-Always respond like a CEO, not a chatbot.
-          `,
-        },
-        {
-          role: "user",
-          content: message,
-        },
-      ],
+User: ${message}`,
     });
 
     const reply = completion.output[0].content[0].text;
@@ -53,12 +43,11 @@ Always respond like a CEO, not a chatbot.
     res.json({ reply });
 
   } catch (error) {
-    console.error("ERROR:", error);
+    console.error(error);
     res.status(500).json({ error: "AI error" });
   }
 });
 
-// تشغيل السيرفر
 const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, () => {
