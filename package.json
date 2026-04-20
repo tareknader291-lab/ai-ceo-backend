@@ -1,48 +1,13 @@
 const express = require("express");
-const OpenAI = require("openai");
 
 const app = express();
-app.use(express.json());
-
-// مهم: تحقق من وجود API KEY
-if (!process.env.OPENAI_API_KEY) {
-  console.error("❌ OPENAI_API_KEY is missing");
-  process.exit(1);
-}
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 app.get("/", (req, res) => {
-  res.send("AI CEO Backend is running 🚀");
-});
-
-app.post("/chat", async (req, res) => {
-  try {
-    const message = req.body.message;
-
-    if (!message) {
-      return res.status(400).json({ error: "No message provided" });
-    }
-
-    const response = await openai.responses.create({
-      model: "gpt-4o-mini",
-      input: `You are an AI CEO.\nUser: ${message}`,
-    });
-
-    res.json({
-      reply: response.output[0].content[0].text,
-    });
-
-  } catch (error) {
-    console.error("ERROR:", error.message);
-    res.status(500).json({ error: "AI error" });
-  }
+  res.send("Server is working 🚀");
 });
 
 const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, () => {
-  console.log("✅ Server running on port " + PORT);
+  console.log("Server running on port " + PORT);
 });
