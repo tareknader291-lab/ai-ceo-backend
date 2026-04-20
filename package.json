@@ -1,13 +1,12 @@
-const express = require("express");
-
-const app = express();
-
-app.get("/", (req, res) => {
-  res.send("Server is working 🚀");
-});
-
-const PORT = process.env.PORT || 8080;
-
-app.listen(PORT, () => {
-  console.log("Server running on port " + PORT);
-});
+{
+  "name": "ai-ceo-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "openai": "^4.0.0"
+  }
+}
