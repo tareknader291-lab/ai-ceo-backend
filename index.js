@@ -1,7 +1,15 @@
+const express = require("express");
 const OpenAI = require("openai");
+
+const app = express();
+app.use(express.json());
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
+});
+
+app.get("/", (req, res) => {
+  res.send("AI CEO Backend is running 🚀");
 });
 
 app.post("/chat", async (req, res) => {
@@ -38,6 +46,13 @@ Always respond like a CEO, not a chatbot.
       reply: completion.choices[0].message.content,
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "AI error" });
   }
+});
+
+const PORT = process.env.PORT || 8080;
+
+app.listen(PORT, () => {
+  console.log("Server running on port " + PORT);
 });
