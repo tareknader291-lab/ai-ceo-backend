@@ -1,37 +1,48 @@
 import express from "express";
+import fetch from "node-fetch";
 
 const app = express();
 app.use(express.json());
 
-app.post("/ai-action", (req, res) => {
-  const { action, reason, priority } = req.body;
+app.post("/ai", async (req, res) => {
+  const { message, user, room } = req.body;
 
-  console.log("AI Action Received:", req.body);
+  try {
+    const response = await fetch("https://api.openai.com/v1/responses", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer YOUR_OPENAI_API_KEY`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "gpt-4.1-mini",
+        input: `
+أنت مدير غرفة دردشة ذكي.
 
-  switch (action) {
-    case "check_payment":
-      console.log("Checking payment...");
-      break;
+المستخدم: ${user}
+الغرفة: ${room}
+الرسالة: ${message}
 
-    case "add_coins":
-      console.log("Adding coins...");
-      break;
+قرر:
+- هل ترد؟
+- وإذا ترد، رد بشكل ذكي ومحفز
+- لا تزعج المستخدمين
+`
+      })
+    });
 
-    case "create_ticket":
-      console.log("Creating support ticket...");
-      break;
+    const data = await response.json();
 
-    case "bug_report":
-      console.log("Logging bug...");
-      break;
+    const reply = data.output[0].content[0].text;
 
-    default:
-      console.log("Ignoring...");
+    res.json({ reply });
+
+  } catch (error) {
+    console.error(error);
+    res.json({ reply: null });
   }
-
-  res.json({ status: "success" });
 });
 
-app.listen(8080, () => {
-  console.log("Server running on port 8080");
+app.listen(3000, () => {
+  console.log("AI server running...");
 });
