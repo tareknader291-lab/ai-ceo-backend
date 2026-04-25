@@ -5,13 +5,13 @@ const app = express();
 app.use(express.json());
 
 app.post("/ai", async (req, res) => {
-  const { message, user, room } = req.body;
-
   try {
+    const { message, user, room } = req.body;
+
     const response = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
       headers: {
-        "Authorization":Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
+        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
@@ -19,27 +19,27 @@ app.post("/ai", async (req, res) => {
         input: `
 أنت مدير غرفة دردشة ذكي.
 
-المستخدم: ${user}
+اسم المستخدم: ${user}
 الغرفة: ${room}
-الرسالة: ${message}
 
-قرر:
-- هل ترد؟
-- وإذا ترد، رد بشكل ذكي ومحفز
-- لا تزعج المستخدمين
+رسالة المستخدم:
+${message}
+
+رد بطريقة طبيعية، قصيرة، وتفاعلية.
 `
       })
     });
 
     const data = await response.json();
 
-    const reply = data.output[0].content[0].text;
+    const reply =
+      data.output?.[0]?.content?.[0]?.text || "⚠️ ما قدرت أرد الآن";
 
     res.json({ reply });
 
   } catch (error) {
     console.error(error);
-    res.json({ reply: null });
+    res.json({ reply: "⚠️ AI server error" });
   }
 });
 
